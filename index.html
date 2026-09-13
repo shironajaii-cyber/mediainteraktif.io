@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iman kepada Malaikat dan Makhluk Gaib Lainnya</title>
+<style>
+  :root{
+    --deep: #0a2a20;
+    --deep2: #103a2c;
+    --mid: #16503c;
+    --gold: #c9a24d;
+    --gold-lt: #eddcae;
+    --cream: #f8f0dc;
+    --ink: #21261f;
+    --maroon: #6e2b2b;
+    --serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --arabic: "Traditional Arabic", "Scheherazade New", "Arabic Typesetting", "Times New Roman", serif;
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ height:100%; margin:0; }
+  body{
+    font-family: var(--serif);
+    color: var(--cream);
+    background: radial-gradient(ellipse at top, var(--deep2) 0%, var(--deep) 60%, #071e17 100%);
+    overflow: hidden;
+  }
+
+  /* ---------- decorative lattice background ---------- */
+  .lattice{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(201,162,77,0.055) 0px, rgba(201,162,77,0.055) 1px, transparent 1px, transparent 46px),
+      repeating-linear-gradient(-45deg, rgba(201,162,77,0.055) 0px, rgba(201,162,77,0.055) 1px, transparent 1px, transparent 46px);
+  }
+  .vignette{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(4,15,11,0.65) 100%);
+  }
+
+  /* ---------- teleport flash overlay ---------- */
+  .flash{
+    position:fixed; inset:0; z-index:50; pointer-events:none;
+    background: radial-gradient(circle, rgba(238,220,174,0.9) 0%, rgba(201,162,77,0.35) 35%, rgba(10,42,32,0) 70%);
+    opacity:0;
+  }
+  .flash.active{ animation: flashPulse .7s ease; }
+  @keyframes flashPulse{
+    0%{ opacity:0; }
+    35%{ opacity:1; }
+    100%{ opacity:0; }
+  }
+
+  /* ---------- nav controls ---------- */
+  .nav-controls{
+    position:fixed; top:18px; left:18px; right:18px; z-index:40;
+    display:flex; justify-content:space-between; pointer-events:none;
+    opacity:0; transition: opacity .4s ease;
+  }
+  .nav-controls.show{ opacity:1; }
+  .nav-btn{
+    pointer-events:auto;
+    display:flex; align-items:center; gap:8px;
+    background: rgba(10,42,32,0.55);
+    border: 1px solid rgba(201,162,77,0.55);
+    color: var(--gold-lt);
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-family: var(--serif);
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: background .25s ease, transform .2s ease, border-color .25s ease;
+  }
+  .nav-btn:hover{ background: rgba(201,162,77,0.18); border-color: var(--gold); transform: translateY(-1px); }
+  .nav-btn:disabled{ opacity:0.35; cursor:default; pointer-events:none; }
+  .nav-btn svg{ width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.6; }
+
+  /* ---------- stage & pages ---------- */
+  #stage{ position:relative; width:100%; height:100%; z-index:1; }
+  .page{
+    position:absolute; inset:0;
+    display:flex; align-items:flex-start; justify-content:center;
+    padding: 90px 24px 60px;
+    overflow-y:auto;
+    opacity:0; visibility:hidden;
+    transform: scale(0.86) rotate(-1.4deg);
+    transition: opacity .5s cubic-bezier(.2,.7,.3,1), transform .5s cubic-bezier(.2,.7,.3,1);
+  }
+  .page.active{ opacity:1; visibility:visible; transform:scale(1) rotate(0); }
+  .page.leaving{ opacity:0; transform: scale(1.18) rotate(1.4deg); transition: opacity .35s ease, transform .35s ease; }
+
+  .panel{
+    width:100%; max-width: 700px;
+    background: linear-gradient(180deg, rgba(16,58,44,0.9), rgba(9,34,26,0.92));
+    border: 1px solid rgba(201,162,77,0.4);
+    border-top: none;
+    border-radius: 0 0 14px 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+    position:relative;
+  }
+  /* mihrab-arch cap on top of each content panel */
+  .panel::before{
+    content:"";
+    display:block;
+    position:absolute; top:-86px; left:50%; transform:translateX(-50%);
+    width: 220px; height: 90px;
+    background: linear-gradient(180deg, rgba(16,58,44,0.9), rgba(9,34,26,0.92));
+    border: 1px solid rgba(201,162,77,0.4);
+    border-bottom:none;
+    border-radius: 110px 110px 0 0;
+  }
+  .panel-body{ position:relative; padding: 34px 34px 40px; z-index:2; }
+
+  .eyebrow-arch{
+    position:relative; z-index:3; text-align:center; padding-top: 26px;
+    color: var(--gold-lt); font-size: 26px; letter-spacing:0.02em;
+  }
+
+  h1.title, h2.title{
+    font-weight: 500; color: var(--gold-lt); text-align:center;
+    margin: 6px 0 4px; line-height:1.25;
+  }
+  h1.title{ font-size: clamp(22px, 3.4vw, 30px); }
+  h2.title{ font-size: clamp(19px, 2.8vw, 24px); }
+  .subtitle{ text-align:center; color: rgba(248,240,220,0.65); font-size:14px; margin-bottom:26px; font-style: italic; }
+
+  p{ line-height:1.85; font-size:16px; color: var(--cream); margin: 0 0 16px; }
+
+  /* ---------- cover page ---------- */
+  #page-cover{ align-items:center; }
+  .cover-frame{
+    width:100%; max-width:640px; text-align:center;
+    border: 1px solid rgba(201,162,77,0.55);
+    padding: 54px 34px 46px;
+    position:relative;
+    background: radial-gradient(ellipse at top, rgba(201,162,77,0.08), transparent 60%);
+  }
+  .cover-frame::before, .cover-frame::after{
+    content:"";
+    position:absolute; width:26px; height:26px;
+    border: 1px solid var(--gold);
+  }
+  .cover-frame::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .cover-frame::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+  .corner-2::before{ top:-1px; right:-1px; left:auto; border-left:none; border-bottom:none; border-right:1px solid var(--gold); }
+  .bismillah{ font-family: var(--arabic); direction: rtl; font-size: clamp(26px,4vw,34px); color: var(--gold); margin-bottom: 22px; letter-spacing:0.01em; }
+  .cover-kicker{ color: rgba(248,240,220,0.6); font-size:13px; letter-spacing:0.08em; margin-bottom:10px; }
+  .cover-title{ font-size: clamp(26px, 4.4vw, 38px); color: var(--gold-lt); font-weight:500; line-height:1.3; margin: 0 0 18px; }
+  .cover-sub{ color: rgba(248,240,220,0.75); font-size:15px; margin-bottom:36px; }
+  .star-divider{ color: var(--gold); font-size:18px; margin: 0 auto 30px; letter-spacing: 14px; }
+
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:10px;
+    background: linear-gradient(180deg, var(--gold-lt), var(--gold));
+    color: #1c1200; font-family: var(--serif); font-size:16px;
+    padding: 13px 34px; border:none; border-radius: 999px;
+    cursor:pointer; letter-spacing:0.03em;
+    box-shadow: 0 8px 24px rgba(201,162,77,0.35);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 12px 30px rgba(201,162,77,0.5); }
+
+  /* ---------- menu page ---------- */
+  #page-menu .panel{ max-width: 720px; }
+  .menu-item{ margin-bottom: 18px; }
+  .menu-btn{
+    width:100%; text-align:left;
+    display:flex; align-items:center; gap:14px;
+    background: rgba(201,162,77,0.08);
+    border: 1px solid rgba(201,162,77,0.4);
+    color: var(--cream);
+    padding: 18px 22px;
+    border-radius: 12px;
+    font-family: var(--serif); font-size:16.5px;
+    cursor:pointer;
+    transition: background .25s ease, border-color .25s ease, transform .2s ease;
+  }
+  .menu-btn:hover{ background: rgba(201,162,77,0.18); border-color: var(--gold); transform: translateX(4px); }
+  .menu-btn .mark{ color: var(--gold); font-size: 17px; flex-shrink:0; }
+  .menu-btn .chev{ margin-left:auto; color: var(--gold); font-size:13px; transition: transform .3s ease; }
+  .menu-btn.is-open .chev{ transform: rotate(90deg); }
+
+  .accordion-panel{ max-height:0; overflow:hidden; opacity:0; transition: max-height .5s ease, opacity .4s ease; }
+  .accordion-panel.open{ opacity:1; }
+  .accordion-inner{ padding: 14px 10px 6px 32px; display:flex; flex-direction:column; gap:10px; }
+
+  .sub-btn{
+    display:flex; align-items:center; gap:10px;
+    background: rgba(9,34,26,0.5);
+    border: 1px solid rgba(201,162,77,0.3);
+    color: var(--gold-lt);
+    padding: 12px 18px;
+    border-radius: 9px;
+    font-family: var(--serif); font-size:15px; text-align:left;
+    cursor:pointer;
+    transition: background .2s ease, border-color .2s ease, padding-left .2s ease;
+  }
+  .sub-btn:hover{ background: rgba(201,162,77,0.14); border-color: var(--gold); padding-left:24px; }
+  .sub-btn .dot{ color: var(--gold); }
+
+  .inline-content{ padding: 6px 10px 14px 32px; }
+  .inline-content p{ font-size:15px; }
+
+  /* ---------- angel task table-ish list ---------- */
+  .task-grid{ display:grid; grid-template-columns: 1fr; gap:10px; margin: 14px 0 20px; }
+  .task-row{
+    display:flex; gap:14px; align-items:baseline;
+    border-bottom: 1px solid rgba(201,162,77,0.18);
+    padding-bottom:9px;
+  }
+  .task-name{ color: var(--gold-lt); min-width:96px; font-size:15px; }
+  .task-desc{ color: rgba(248,240,220,0.85); font-size:15px; }
+
+  .trait-list{ margin: 10px 0 18px; padding-left: 0; list-style:none; }
+  .trait-list li{ position:relative; padding-left:22px; margin-bottom:10px; font-size:15px; line-height:1.7; color: var(--cream); }
+  .trait-list li::before{ content:"✦"; position:absolute; left:0; color: var(--gold); font-size:12px; top:5px; }
+
+  .section-label{ color: var(--gold); font-size:13px; letter-spacing:0.06em; margin: 26px 0 8px; border-top:1px solid rgba(201,162,77,0.25); padding-top:18px; }
+
+  /* ---------- verse / dalil blocks ---------- */
+  .verse-block{
+    margin: 20px 0 26px;
+    padding: 20px 22px;
+    background: rgba(9,34,26,0.55);
+    border-left: 3px solid var(--gold);
+    border-radius: 4px;
+  }
+  .verse-ref{ color: var(--gold); font-size:13.5px; margin-bottom:12px; letter-spacing:0.02em; }
+  .verse-arabic{
+    font-family: var(--arabic); direction: rtl; text-align: right;
+    font-size: clamp(22px, 3.2vw, 27px); line-height:2.1; color: var(--gold-lt);
+    margin-bottom:14px;
+  }
+  .verse-translation{ font-size:14.5px; color: rgba(248,240,220,0.82); font-style: italic; line-height:1.8; }
+
+  .back-row{ display:flex; justify-content:center; margin-top: 30px; }
+  .btn-secondary{
+    display:inline-flex; align-items:center; gap:8px;
+    background: transparent; border: 1px solid rgba(201,162,77,0.5);
+    color: var(--gold-lt); padding: 10px 26px; border-radius:999px;
+    font-family: var(--serif); font-size:14.5px; cursor:pointer;
+    transition: background .2s ease, border-color .2s ease;
+  }
+  .btn-secondary:hover{ background: rgba(201,162,77,0.14); border-color: var(--gold); }
+
+  /* tone variants for jin/iblis/setan pages */
+  .panel.tone-warn{ border-color: rgba(110,43,43,0.55); }
+  .panel.tone-warn::before{ border-color: rgba(110,43,43,0.55); }
+  .panel.tone-warn .verse-block{ border-left-color: var(--maroon); }
+  .panel.tone-warn .eyebrow-arch{ color:#e6b9a8; }
+
+  ::-webkit-scrollbar{ width:9px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background: rgba(201,162,77,0.4); border-radius:6px; }
+
+  @media (max-width: 560px){
+    .panel::before{ width:150px; height:66px; top:-60px; }
+    .panel-body{ padding: 24px 18px 30px; }
+    .task-row{ flex-direction:column; gap:2px; }
+    .nav-controls{ top:12px; left:12px; right:12px; }
+    .nav-btn{ padding:8px 12px; font-size:13px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .page, .page.active, .page.leaving, .accordion-panel, .flash.active{ transition:none !important; animation:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="lattice"></div>
+<div class="vignette"></div>
+<div class="flash" id="flash"></div>
+
+<nav class="nav-controls" id="navControls">
+  <button class="nav-btn" id="btnBack" onclick="goBack()">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg> Kembali
+  </button>
+  <button class="nav-btn" id="btnHome" onclick="goHome()">
+    <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg> Beranda
+  </button>
+</nav>
+
+<main id="stage">
+
+  <!-- ================= COVER ================= -->
+  <section class="page active" id="page-cover">
+    <div class="cover-frame">
+      <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      <div class="cover-kicker">Materi Pendidikan Agama Islam</div>
+      <div class="cover-title">Iman kepada Malaikat<br>dan Makhluk Gaib Lainnya</div>
+      <div class="star-divider">✦ ✦ ✦</div>
+      <div class="cover-sub">Meneguhkan keyakinan akan yang gaib, sebagaimana difirmankan dalam Al-Qur'an</div>
+      <button class="btn-primary" onclick="startJourney()">Mulai ⟶</button>
+    </div>
+  </section>
+
+  <!-- ================= MENU ================= -->
+  <section class="page" id="page-menu">
+    <div class="panel">
+      <div class="eyebrow-arch">☾</div>
+      <div class="panel-body">
+        <h1 class="title">Iman kepada Malaikat dan Makhluk Gaib Lainnya</h1>
+        <div class="subtitle">Pilih salah satu topik untuk memulai</div>
+
+        <div class="menu-item">
+          <button class="menu-btn" id="mbtn-1" onclick="toggleAccordion('panel-1', this)">
+            <span class="mark">✦</span>
+            <span>Pengertian Iman kepada Malaikat</span>
+            <span class="chev">❯</span>
+          </button>
+          <div class="accordion-panel" id="panel-1">
+            <div class="accordion-inner">
+              <button class="sub-btn" onclick="goTo('page-pengertian-malaikat')"><span class="dot">•</span> Pengertian</button>
+              <button class="sub-btn" onclick="goTo('page-dalil-malaikat')"><span class="dot">•</span> Dalil</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <button class="menu-btn" id="mbtn-2" onclick="toggleAccordion('panel-2', this)">
+            <span class="mark">✦</span>
+            <span>Pengertian dan Dalil Jin, Iblis, dan Setan</span>
+            <span class="chev">❯</span>
+          </button>
+          <div class="accordion-panel" id="panel-2">
+            <div class="accordion-inner">
+              <button class="sub-btn" onclick="goTo('page-jin')"><span class="dot">•</span> Jin</button>
+              <button class="sub-btn" onclick="goTo('page-iblis')"><span class="dot">•</span> Iblis</button>
+              <button class="sub-btn" onclick="goTo('page-setan')"><span class="dot">•</span> Setan</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <button class="menu-btn" id="mbtn-3" onclick="toggleAccordion('panel-3', this)">
+            <span class="mark">✦</span>
+            <span>Tugas dan Sifat-Sifat Malaikat Allah Swt. serta Makhluk Gaib Lainnya</span>
+            <span class="chev">❯</span>
+          </button>
+          <div class="accordion-panel" id="panel-3">
+            <div class="inline-content">
+              <div class="section-label">Sepuluh Malaikat dan Tugasnya</div>
+              <div class="task-grid">
+                <div class="task-row"><span class="task-name">Jibril</span><span class="task-desc">Menyampaikan wahyu kepada para nabi dan rasul</span></div>
+                <div class="task-row"><span class="task-name">Mikail</span><span class="task-desc">Mengatur rezeki, hujan, dan kesejahteraan makhluk</span></div>
+                <div class="task-row"><span class="task-name">Israfil</span><span class="task-desc">Meniup sangkakala pada hari kiamat</span></div>
+                <div class="task-row"><span class="task-name">Izrail</span><span class="task-desc">Mencabut nyawa seluruh makhluk</span></div>
+                <div class="task-row"><span class="task-name">Munkar</span><span class="task-desc">Menanyai amal manusia di alam kubur</span></div>
+                <div class="task-row"><span class="task-name">Nakir</span><span class="task-desc">Menanyai amal manusia di alam kubur</span></div>
+                <div class="task-row"><span class="task-name">Raqib</span><span class="task-desc">Mencatat amal baik manusia</span></div>
+                <div class="task-row"><span class="task-name">Atid</span><span class="task-desc">Mencatat amal buruk manusia</span></div>
+                <div class="task-row"><span class="task-name">Malik</span><span class="task-desc">Menjaga dan mengawasi neraka</span></div>
+                <div class="task-row"><span class="task-name">Ridwan</span><span class="task-desc">Menjaga dan mengawasi surga</span></div>
+              </div>
+
+              <div class="section-label">Sifat-Sifat Malaikat</div>
+              <ul class="trait-list">
+                <li>Diciptakan Allah Swt. dari cahaya (nur)</li>
+                <li>Selalu taat kepada Allah Swt. dan tidak pernah berbuat maksiat</li>
+                <li>Tidak makan, tidak minum, dan tidak berjenis kelamin</li>
+                <li>Dapat berubah wujud atas izin Allah, misalnya menyerupai manusia</li>
+                <li>Jumlahnya sangat banyak, hanya Allah Swt. yang mengetahui pastinya</li>
+                <li>Tidak memiliki hawa nafsu sebagaimana manusia</li>
+              </ul>
+
+              <div class="section-label">Sifat Makhluk Gaib Lainnya</div>
+              <ul class="trait-list">
+                <li>Jin bersifat mukalaf seperti manusia — ada yang taat (mukmin) dan ada yang durhaka (kafir)</li>
+                <li>Iblis bersifat sombong, menjadi pemimpin golongan yang mengajak manusia pada keburukan</li>
+                <li>Setan senantiasa menggoda dan menjadi musuh nyata bagi manusia hingga hari kiamat</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PENGERTIAN MALAIKAT ================= -->
+  <section class="page" id="page-pengertian-malaikat">
+    <div class="panel">
+      <div class="eyebrow-arch">☾</div>
+      <div class="panel-body">
+        <h2 class="title">Pengertian Iman kepada Malaikat</h2>
+        <div class="subtitle">Rukun Iman kedua</div>
+        <p>Iman kepada malaikat artinya meyakini dengan sepenuh hati bahwa Allah Swt. menciptakan malaikat dari cahaya (nur), sebagai makhluk gaib yang taat dan tidak pernah durhaka kepada Allah, meskipun kita tidak dapat melihat wujudnya.</p>
+        <div class="back-row">
+          <button class="btn-secondary" onclick="backToMenu('panel-1')">‹ Kembali ke Menu</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DALIL MALAIKAT ================= -->
+  <section class="page" id="page-dalil-malaikat">
+    <div class="panel">
+      <div class="eyebrow-arch">☾</div>
+      <div class="panel-body">
+        <h2 class="title">Dalil Naqli tentang Malaikat</h2>
+        <div class="subtitle">Landasan Al-Qur'an</div>
+
+        <div class="verse-block">
+          <div class="verse-ref">QS. Al-Hijr [15]: 30</div>
+          <div class="verse-arabic">فَسَجَدَ الْمَلَائِكَةُ كُلُّهُمْ أَجْمَعُونَ</div>
+          <div class="verse-translation">Artinya: "Maka bersujudlah para malaikat itu semuanya."</div>
+        </div>
+
+        <div class="verse-block">
+          <div class="verse-ref">QS. At-Tahrim [66]: 6</div>
+          <div class="verse-arabic">عَلَيْهَا مَلَائِكَةٌ غِلَاظٌ شِدَادٌ لَا يَعْصُونَ اللَّهَ مَا أَمَرَهُمْ وَيَفْعَلُونَ مَا يُؤْمَرُونَ</div>
+          <div class="verse-translation">Artinya: "Penjaganya malaikat-malaikat yang kasar, keras, dan tidak mendurhakai Allah terhadap apa yang Dia perintahkan kepada mereka, dan selalu mengerjakan apa yang diperintahkan."</div>
+        </div>
+
+        <div class="back-row">
+          <button class="btn-secondary" onclick="backToMenu('panel-1')">‹ Kembali ke Menu</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= JIN ================= -->
+  <section class="page" id="page-jin">
+    <div class="panel">
+      <div class="eyebrow-arch">☾</div>
+      <div class="panel-body">
+        <h2 class="title">Jin</h2>
+        <div class="subtitle">Makhluk gaib ciptaan Allah Swt.</div>
+        <p>Jin adalah makhluk gaib yang diciptakan Allah Swt. dari api, bersifat mukalaf (dibebani kewajiban) seperti manusia. Di antara jin ada yang taat (mukmin) dan ada yang durhaka (kafir).</p>
+
+        <div class="verse-block">
+          <div class="verse-ref">QS. Al-Hijr [15]: 26–27</div>
+          <div class="verse-arabic">وَلَقَدْ خَلَقْنَا الْإِنسَانَ مِن صَلْصَالٍ مِّنْ حَمَإٍ مَّسْنُونٍ وَالْجَانَّ خَلَقْنَاهُ مِن قَبْلُ مِن نَّارِ السَّمُومِ</div>
+          <div class="verse-translation">Artinya: "Dan sungguh, Kami telah menciptakan manusia dari tanah liat kering dari lumpur hitam yang diberi bentuk. Dan Kami telah menciptakan jin sebelum itu dari api yang sangat panas."</div>
+        </div>
+
+        <div class="back-row">
+          <button class="btn-secondary" onclick="backToMenu('panel-2')">‹ Kembali ke Menu</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= IBLIS ================= -->
+  <section class="page" id="page-iblis">
+    <div class="panel tone-warn">
+      <div class="eyebrow-arch">☾</div>
+      <div class="panel-body">
+        <h2 class="title">Iblis</h2>
+        <div class="subtitle">Golongan jin yang sombong</div>
+        <p>Iblis adalah nama bagi jin yang sombong dan durhaka karena menolak perintah Allah untuk sujud menghormati Nabi Adam a.s.</p>
+
+        <div class="verse-block">
+          <div class="verse-ref">QS. Al-A'raf [7]: 27</div>
+          <div class="verse-arabic">إِنَّهُ يَرَاكُمْ هُوَ وَقَبِيلُهُ مِنْ حَيْثُ لَا تَرَوْنَهُمْ</div>
+          <div class="verse-translation">Artinya: "Sesungguhnya ia (iblis) dan pengikutnya dapat melihat kamu, sedangkan kamu tidak dapat melihat mereka."</div>
+        </div>
+
+        <div class="back-row">
+          <button class="btn-secondary" onclick="backToMenu('panel-2')">‹ Kembali ke Menu</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SETAN ================= -->
+  <section class="page" id="page-setan">
+    <div class="panel tone-warn">
+      <div class="eyebrow-arch">☾</div>
+      <div class="panel-body">
+        <h2 class="title">Setan</h2>
+        <div class="subtitle">Musuh nyata manusia</div>
+        <p>Setan adalah sebutan umum bagi setiap makhluk, baik jin maupun manusia, yang mengajak dan menggoda kepada keburukan serta menjauhkan diri dari Allah Swt.</p>
+
+        <div class="verse-block">
+          <div class="verse-ref">QS. Al-Baqarah [2]: 168</div>
+          <div class="verse-arabic">يَا أَيُّهَا النَّاسُ كُلُوا مِمَّا فِي الْأَرْضِ حَلَالًا طَيِّبًا وَلَا تَتَّبِعُوا خُطُوَاتِ الشَّيْطَانِ إِنَّهُ لَكُمْ عَدُوٌّ مُّبِينٌ</div>
+          <div class="verse-translation">Artinya: "Wahai manusia, makanlah yang halal lagi baik dari apa yang terdapat di bumi, dan janganlah kamu mengikuti langkah-langkah setan; sesungguhnya setan itu musuh yang nyata bagimu."</div>
+        </div>
+
+        <div class="back-row">
+          <button class="btn-secondary" onclick="backToMenu('panel-2')">‹ Kembali ke Menu</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  var flashEl = document.getElementById('flash');
+  var navControls = document.getElementById('navControls');
+  var btnHome = document.getElementById('btnHome');
+  var btnBack = document.getElementById('btnBack');
+  var historyStack = ['page-cover'];
+
+  function teleport(targetId){
+    var current = document.querySelector('.page.active');
+    var target = document.getElementById(targetId);
+    if(!target || (current && current.id === targetId)) return;
+
+    flashEl.classList.add('active');
+    setTimeout(function(){ flashEl.classList.remove('active'); }, 700);
+
+    if(current){
+      current.classList.add('leaving');
+      current.classList.remove('active');
+      setTimeout(function(){ current.classList.remove('leaving'); }, 350);
+    }
+    setTimeout(function(){
+      target.classList.add('active');
+      target.scrollTop = 0;
+    }, current ? 160 : 0);
+  }
+
+  function updateNav(id){
+    if(id === 'page-cover'){
+      navControls.classList.remove('show');
+    } else {
+      navControls.classList.add('show');
+      btnBack.disabled = historyStack.length <= 1;
+    }
+  }
+
+  function startJourney(){
+    teleport('page-menu');
+    historyStack = ['page-cover', 'page-menu'];
+    updateNav('page-menu');
+  }
+
+  function goTo(id){
+    teleport(id);
+    historyStack.push(id);
+    updateNav(id);
+  }
+
+  function goHome(){
+    closeAllAccordions();
+    teleport('page-menu');
+    historyStack = ['page-cover', 'page-menu'];
+    updateNav('page-menu');
+  }
+
+  function goBack(){
+    if(historyStack.length <= 1) return;
+    historyStack.pop();
+    var prev = historyStack[historyStack.length - 1];
+    teleport(prev);
+    updateNav(prev);
+  }
+
+  function backToMenu(panelId){
+    teleport('page-menu');
+    historyStack = ['page-cover', 'page-menu'];
+    updateNav('page-menu');
+    setTimeout(function(){ openPanelExclusive(panelId); }, 420);
+  }
+
+  function closeAllAccordions(){
+    document.querySelectorAll('.accordion-panel.open').forEach(function(p){
+      p.classList.remove('open');
+      p.style.maxHeight = null;
+    });
+    document.querySelectorAll('.menu-btn.is-open').forEach(function(b){
+      b.classList.remove('is-open');
+    });
+  }
+
+  function openPanelExclusive(id){
+    document.querySelectorAll('.accordion-panel').forEach(function(p){
+      var btn = document.querySelector('[onclick*="' + p.id + '"]');
+      if(p.id === id){
+        p.classList.add('open');
+        p.style.maxHeight = p.scrollHeight + 'px';
+        if(btn) btn.classList.add('is-open');
+      } else {
+        p.classList.remove('open');
+        p.style.maxHeight = null;
+        if(btn) btn.classList.remove('is-open');
+      }
+    });
+  }
+
+  function toggleAccordion(id, btn){
+    var panel = document.getElementById(id);
+    var isOpen = panel.classList.contains('open');
+    if(isOpen){
+      panel.classList.remove('open');
+      panel.style.maxHeight = null;
+      if(btn) btn.classList.remove('is-open');
+    } else {
+      openPanelExclusive(id);
+    }
+  }
+
+  updateNav('page-cover');
+</script>
+
+</body>
+</html>
